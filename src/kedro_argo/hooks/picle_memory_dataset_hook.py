@@ -1,3 +1,5 @@
+from glob import glob
+from pathlib import Path
 from typing import Any, Dict
 
 from kedro.framework.hooks import hook_impl
@@ -40,62 +42,66 @@ class PicleMemoryDataSetHook:
                 continue
             if isinstance(dataset, MemoryDataSet):
                 catalog._data_sets[name] = PickleDataSet(filepath=f"data/tmp/{name}.pkl")
+        for filepath in glob("data/tmp/*.pkl"):
+            name = Path(filepath).stem
+            catalog._data_sets[name] = PickleDataSet(filepath=filepath) 
 
-    @hook_impl
-    def before_node_run(
-        self,
-        node: Node,
-        catalog: DataCatalog,
-        inputs: Dict[str, Any],
-        is_async: bool,
-        run_id: str,
-    ) -> None:
-        """Hook to be invoked before a node runs.
-        The arguments received are the same as those used by ``kedro.runner.run_node``
+    # @hook_impl
+    # def before_node_run(
+    #     self,
+    #     node: Node,
+    #     catalog: DataCatalog,
+    #     inputs: Dict[str, Any],
+    #     is_async: bool,
+    #     run_id: str,
+    # ) -> None:
+    #     """Hook to be invoked before a node runs.
+    #     The arguments received are the same as those used by ``kedro.runner.run_node``
 
-        Args:
-            node: The ``Node`` to run.
-            catalog: A ``DataCatalog`` containing the node's inputs and outputs.
-            inputs: The dictionary of inputs dataset.
-                The keys are dataset names and the values are the actual loaded input data,
-                not the dataset instance.
-            is_async: Whether the node was run in ``async`` mode.
-            run_id: The id of the run.
-        """
-        for name, dataset in catalog._data_sets.items():
-            if name.startswith("params:") or name == "parameters":
-                continue
-            if isinstance(dataset, MemoryDataSet):
-                catalog._data_sets[name] = PickleDataSet(filepath=f"data/tmp/{name}.pkl")
+    #     Args:
+    #         node: The ``Node`` to run.
+    #         catalog: A ``DataCatalog`` containing the node's inputs and outputs.
+    #         inputs: The dictionary of inputs dataset.
+    #             The keys are dataset names and the values are the actual loaded input data,
+    #             not the dataset instance.
+    #         is_async: Whether the node was run in ``async`` mode.
+    #         run_id: The id of the run.
+    #     """
+    #     for name, dataset in catalog._data_sets.items():
+    #         if name.startswith("params:") or name == "parameters":
+    #             continue
+    #         if isinstance(dataset, MemoryDataSet):
+    #             catalog._data_sets[name] = PickleDataSet(filepath=f"data/tmp/{name}.pkl")
 
-    @hook_impl
-    def after_node_run(  # pylint: disable=too-many-arguments
-        self,
-        node: Node,
-        catalog: DataCatalog,
-        inputs: Dict[str, Any],
-        outputs: Dict[str, Any],
-        is_async: bool,
-        run_id: str,
-    ) -> None:
-        """Hook to be invoked after a node runs.
-        The arguments received are the same as those used by ``kedro.runner.run_node``
-        as well as the ``outputs`` of the node run.
+    # @hook_impl
+    # def after_node_run(  # pylint: disable=too-many-arguments
+    #     self,
+    #     node: Node,
+    #     catalog: DataCatalog,
+    #     inputs: Dict[str, Any],
+    #     outputs: Dict[str, Any],
+    #     is_async: bool,
+    #     run_id: str,
+    # ) -> None:
+    #     """Hook to be invoked after a node runs.
+    #     The arguments received are the same as those used by ``kedro.runner.run_node``
+    #     as well as the ``outputs`` of the node run.
 
-        Args:
-            node: The ``Node`` that ran.
-            catalog: A ``DataCatalog`` containing the node's inputs and outputs.
-            inputs: The dictionary of inputs dataset.
-                The keys are dataset names and the values are the actual loaded input data,
-                not the dataset instance.
-            outputs: The dictionary of outputs dataset.
-                The keys are dataset names and the values are the actual computed output data,
-                not the dataset instance.
-            is_async: Whether the node was run in ``async`` mode.
-            run_id: The id of the run.
-        """
-        for name, dataset in catalog._data_sets.items():
-            if name.startswith("params:") or name == "parameters":
-                continue
-            if isinstance(dataset, MemoryDataSet):
-                catalog._data_sets[name] = PickleDataSet(filepath=f"data/tmp/{name}.pkl")
+    #     Args:
+    #         node: The ``Node`` that ran.
+    #         catalog: A ``DataCatalog`` containing the node's inputs and outputs.
+    #         inputs: The dictionary of inputs dataset.
+    #             The keys are dataset names and the values are the actual loaded input data,
+    #             not the dataset instance.
+    #         outputs: The dictionary of outputs dataset.
+    #             The keys are dataset names and the values are the actual computed output data,
+    #             not the dataset instance.
+    #         is_async: Whether the node was run in ``async`` mode.
+    #         run_id: The id of the run.
+    #     """
+    #     for name, dataset in catalog._data_sets.items():
+    #         if name.startswith("params:") or name == "parameters":
+    #             continue
+    #         if isinstance(dataset, MemoryDataSet):
+    #             catalog._data_sets[name] = PickleDataSet(filepath=f"data/tmp/{name}.pkl")
+    #             catalog._data_sets[name]
