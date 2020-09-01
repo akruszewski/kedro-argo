@@ -6,7 +6,7 @@ from pathlib import Path
 import click
 import pkg_resources
 import yaml
-from kedro import cli
+from kedro.context import load_context
 
 
 @click.group(name="ARGO")
@@ -24,7 +24,7 @@ def commands():
 def argokedro(image, templates_folder, ytt, namespace, selected_pipeline):
     """Creates an argo pipeline yaml
     """
-    pc = cli.get_project_context()
+    pc = load_context(Path.cwd())
     pipeline = get_selected_pipeline(pc, selected_pipeline)
     project_name = pc.project_name
     parameters = pc.catalog.load("parameters")
