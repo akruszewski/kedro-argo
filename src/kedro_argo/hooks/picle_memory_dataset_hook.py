@@ -1,10 +1,8 @@
 import itertools
-from glob import glob
 from pathlib import Path
 from typing import Any, Dict, Union
 
 from kedro.framework.hooks import hook_impl
-from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline
 from kedro.pipeline.node import Node
 from kedro.extras.datasets.pickle import PickleDataSet
