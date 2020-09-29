@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 
 import click
+import ipdb
 import pkg_resources
 import yaml
 from kedro.context import load_context
@@ -22,11 +23,10 @@ def commands():
 @click.option("-n", "--namespace", default="")
 @click.option("-p", "--pipeline", "selected_pipeline", default=None)
 def argokedro(image, templates_folder, ytt, namespace, selected_pipeline):
-    """Creates an argo pipeline yaml
-    """
+    """Creates an argo pipeline yaml."""
     pc = load_context(Path.cwd())
     pipeline = get_selected_pipeline(pc, selected_pipeline)
-    project_name = pc.project_name
+    project_name = pc.project_name.lower().replace(" ", "-") + "-"
     parameters = pc.catalog.load("parameters")
     pretty_params = transform_parameters(parameters)
     dependencies = pipeline.node_dependencies
